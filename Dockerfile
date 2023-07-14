@@ -1,5 +1,6 @@
 FROM python:alpine3.17
 
+
 WORKDIR /cloud_native_course_ex3
 COPY main.py .
 RUN pip install flask
