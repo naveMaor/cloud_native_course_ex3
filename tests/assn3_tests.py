@@ -1,5 +1,4 @@
 import httpRequest
-# from assertions import *
 
 def test_post_three_dishes():
     """
