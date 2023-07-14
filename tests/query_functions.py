@@ -1,6 +1,6 @@
 import httpRequest
 
-def start():
+def main():
     with open('query.txt', 'r') as query_file:
         line_number = 0
         with open('response.txt', 'w') as response_file:
@@ -23,3 +23,5 @@ def start():
                 response_file.write(f'{dish_name} contains {calories} calories, {sodium} mgs of sodium, and {sugar} grams of sugar\n')
                 print(f'{dish_name} contains {calories} calories, {sodium} mgs of sodium, and {sugar} grams of sugar')
 
+if __name__ == "__main__":
+    main()
