@@ -120,3 +120,37 @@ jobs:
       with:
         name: NewestLogfile
         path: ${{ github.workspace }}/log.txt
+        
+  query:
+    needs: ["build", "test"]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3  # downloads all artifacts
+      - name: Load Docker images from previous workflows
+        run: docker load --input assignment3/image.tar
+      - name: check assignment3 image is loaded
+        run: docker image ls
+      - name: run image in container
+        run: docker run -p8000:8000 assignment3 &
+      - name: Check container is running
+        run: docker ps
+  #     2. set up python and pytest environment
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+          pip install requests
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: run query functions
+        run: |
+          cd tests
+          python query_functions.py
+      - name: Upload response.txt
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+            name: response
+            path: ${{ github.workspace }}/tests/response.txt
