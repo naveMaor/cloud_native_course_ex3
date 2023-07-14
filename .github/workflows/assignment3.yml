@@ -1,4 +1,4 @@
-name: ci_cd
+name: assignment3
 on:
   push
 
