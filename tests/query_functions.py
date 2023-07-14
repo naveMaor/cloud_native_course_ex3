@@ -10,7 +10,7 @@ def main():
 
             if post_response.json() in [-3, -4]:
                 response_file.write(
-                    f'Error! food at line {line_number} Returned code -3 or -4.\n')
+                    f'ERROR.\n')
                 continue
 
             dish_data = get_response.json()

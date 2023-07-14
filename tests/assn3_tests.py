@@ -18,20 +18,23 @@ def test_post_three_dishes():
 
 def test_get_orange_dish_by_id():
     """
-    Test function get the first dish by id expected as orange dish using HTTP requests.
+    Test function to get the first dish by id expected to be the orange dish using HTTP requests.
     """
     response = httpRequest.get("/dishes/1")
     assert response.status_code == 200
-    sodium_field = response.json()['sodium']
-    assert sodium_field >= 0.9 and sodium_field <= 1.1
+    dish_data = response.json()
+    sodium_amount = dish_data['sodium']
+    assert 0.9 <= sodium_amount <= 1.1
+
 
 def test_get_all_three_dishes():
     """
-    Test function to get all dishes expected to get three using HTTP requests.
+    Test function to get all dishes. Expected to get three dishes using HTTP requests.
     """
     response = httpRequest.get("dishes")
     assert response.status_code == 200
-    assert len(response.json()) == 3
+    dishes_data = response.json()
+    assert len(dishes_data) == 3
 
 
 def test_post_dish_doesnt_exist():
@@ -42,8 +45,10 @@ def test_post_dish_doesnt_exist():
     dish = "blah"
     response = httpRequest.post("dishes", data={'name': dish})
 
+    expected_status_codes = [404, 400, 422]
     assert response.json() == -3
-    assert response.status_code == 404 or response.status_code == 400 or response.status_code == 422
+    assert response.status_code in expected_status_codes
+
 
 
 def test_post_dish_already_exists():
@@ -54,31 +59,35 @@ def test_post_dish_already_exists():
     dish = "orange"
     response = httpRequest.post("dishes", data={'name': dish})
 
+    expected_status_codes = [404, 400, 422]
     assert response.json() == -2
-    assert response.status_code == 404 or response.status_code == 400 or response.status_code == 422
+    assert response.status_code in expected_status_codes
+
 
 
 def test_post_meal_with_dishes_id():
     """
-    Test function to insert a meal with dishes id using HTTP requests.
-    expected to get 201 as a response.
+    Test function to insert a meal with dish IDs using HTTP requests.
+    Expected to get a response with status code 201 and a positive JSON value.
     """
-    response1 = httpRequest.post("meals", data={'name': "delicious", 'appetizer': 1, 'main': 2, 'dessert': 3})
+    meal_data = {'name': "delicious", 'appetizer': 1, 'main': 2, 'dessert': 3}
+    response = httpRequest.post("meals", data=meal_data)
 
-    assert response1.status_code == 201
-    assert response1.json() > 0
+    assert response.status_code == 201
+    assert response.json() > 0
 
 
 def test_get_all_meals():
     """
-    Test function to get all meals expected to get one using HTTP requests.
-    expected to have one meal in the response and the calories of the meal is between 400 and 500.
+    Test function to get all meals. Expected to have one meal in the response with calories between 400 and 500.
     """
     response = httpRequest.get("meals")
 
     assert response.status_code == 200
-    assert len(response.json()) == 1
-    assert response.json()["1"]['cal'] >= 400 and response.json()["1"]['cal'] <= 500
+    meals_data = response.json()
+    assert len(meals_data) == 1
+    meal = meals_data["1"]
+    assert 400 <= meal['cal'] <= 500
 
 
 def test_post_meal_already_exists():
@@ -86,7 +95,10 @@ def test_post_meal_already_exists():
     Test function to insert a meal that already exists using HTTP requests.
     expected to get -2 as a response.
     """
-    response1 = httpRequest.post("meals", data={'name': "delicious", 'appetizer': 1, 'main': 2, 'dessert': 3})
+    meal_data = {'name': "delicious", 'appetizer': 1, 'main': 2, 'dessert': 3}
+    response = httpRequest.post("meals", data=meal_data)
 
-    assert response1.status_code == 400 or response1.status_code == 422
-    assert response1.json() == -2
+    expected_status_codes = [400, 422]
+    assert response.status_code in expected_status_codes
+    assert response.json() == -2
+
